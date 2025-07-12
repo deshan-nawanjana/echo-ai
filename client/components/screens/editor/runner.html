@@ -20,15 +20,41 @@
         <div data-icon="train"></div>
       </button>
     </div>
-    <div class="list" v-if="isChatAvailable">
+    <div class="list" ref="chat_tray" v-if="isChatAvailable">
       <div class="list-content">
         <div
           class="item"
           :data-message-type="item.type"
           :data-message-sender="item.sender || false"
+          v-if="project.type === 'text'"
           v-for="item in project.predictions.data">
           <div class="item-content" :title="toDateString(item.time)">
             {{item.sender ? item.data : "Model retrained"}}
+          </div>
+        </div>
+        <div
+          class="item"
+          :data-message-type="item.type"
+          :data-message-sender="item.sender || false"
+          v-if="project.type === 'image'"
+          v-for="item in project.predictions.data">
+          <div
+            class="item-content item-content-image"
+            v-if="item.sender === 'user'"
+            :title="toDateString(item.time)">
+            <img draggable="false" :src="toFileURL(project.id, item.data)">
+          </div>
+          <div
+            class="item-content"
+            v-if="item.sender === 'model'"
+            :title="toDateString(item.time)">
+            {{item.data}}
+          </div>
+          <div
+            class="item-content"
+            v-if="item.type === 'retrained'"
+            :title="toDateString(item.time)">
+            Model retrained
           </div>
         </div>
       </div>
@@ -41,13 +67,21 @@
         Send a message to run predictions
       </div>
     </div>
-    <div class="options">
+    <div class="options" :data-model-type="project.type">
       <input
         type="text"
         v-model="project.predictions._input"
+        v-if="project.type === 'text'"
         placeholder="Type a message and hit enter..."
         @keydown="predictModel"
       />
+      <button
+        class="button"
+        v-if="project.type === 'image'"
+        @click="predictModel">
+        <div data-icon="upload"></div>
+        Send an Image
+      </button>
     </div>
   </div>
   <div class="empty" v-else>

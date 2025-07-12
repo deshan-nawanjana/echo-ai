@@ -177,6 +177,8 @@ new Vue({
       this.project = await API("GET", "project", { id })
       // switch to editor screen
       this.screen = "editor"
+      // focus on chat
+      this.focusChat(100)
       // stop loading
       this.loading = false
     },
@@ -269,34 +271,13 @@ new Vue({
       item._pattern = ""
     },
     // method to add image patterns
-    addImagePattern(id) {
-      // create file input
-      const input = document.createElement("input")
-      // configure input options
-      input.type = "file"
-      input.multiple = true
-      input.accept = "image/png, image/jpeg"
-      // input listener
-      input.addEventListener("input", async () => {
-        // create form data
-        const data = new FormData()
-        // for each file on input
-        for (const file of input.files) {
-          // resize and append image
-          data.append("files", await resize(file))
-        }
-        // request files upload
-        const names = await fetch(`/api/upload?id=${this.project.id}`, {
-          method: "POST",
-          body: data
-        }).then(resp => resp.json())
-        // find input by id
-        const match = this.project.inputs.find(item => item.id === id)
-        // push file names to patterns
-        if (match) { match.patterns.push(...names) }
-      })
-      // trigger file open window
-      input.click()
+    async addImagePattern(id) {
+      // upload files
+      const names = await this.upload("image/png, image/jpeg")
+      // find input by id
+      const match = this.project.inputs.find(item => item.id === id)
+      // push file names to patterns
+      if (match) { match.patterns.push(...names) }
     },
     // method to delete pattern
     deletePattern(index) {
@@ -352,16 +333,26 @@ new Vue({
     async predictModel(event) {
       // return if predicting
       if (this.predicting) { return }
-      // return if not enter key
-      if (event.key !== "Enter") { return }
-      // get input value
-      const input = this.project.predictions._input.trim()
+      // input value
+      let input = null
+      // get project type
+      const type = this.project.type
+      // switch by type
+      if (type === "text") {
+        // return if not enter key
+        if (event.key !== "Enter") { return }
+        // get input value
+        input = this.project.predictions._input.trim()
+        // clear input value
+        this.project.predictions._input = ""
+      } else if (type === "image") {
+        // upload and get image name as input
+        input = (await this.upload())[0]
+      }
       // return if empty input
       if (!input) { return }
       // start predicting
       this.predicting = true
-      // clear input value
-      this.project.predictions._input = ""
       // push user message on predictions
       this.project.predictions.data.push({
         time: Date.now(),
@@ -369,6 +360,8 @@ new Vue({
         sender: "user",
         data: input
       })
+      // focus on chat
+      this.focusChat()
       // request prediction response
       const data = await API("POST", "predict", { id: this.project.id, input })
       // get content by type
@@ -388,11 +381,55 @@ new Vue({
           sender: "model",
           data: response
         })
+        // focus on chat
+        this.focusChat()
         // save project
         await this.saveProject()
         // stop predicting
         this.predicting = false
       }, 600)
+    },
+    // method to upload files
+    upload(accept) {
+      return new Promise(resolve => {
+        // create file input
+        const input = document.createElement("input")
+        // configure input options
+        input.type = "file"
+        input.multiple = true
+        input.accept = accept
+        // input listener
+        input.addEventListener("input", async () => {
+          // create form data
+          const data = new FormData()
+          // for each file on input
+          for (const file of input.files) {
+            // resize and append image
+            data.append("files", await resize(file))
+          }
+          // request files upload
+          const names = await fetch(`/api/upload?id=${this.project.id}`, {
+            method: "POST",
+            body: data
+          }).then(resp => resp.json())
+          // resolve file names
+          resolve(names)
+        })
+        // trigger file open window
+        input.click()
+      })
+    },
+    // method to focus chat listing
+    focusChat(time = 80) {
+      // dom update delay
+      setTimeout(() => {
+        // get chat tray element
+        const element = this.$refs.chat_tray
+        // return if no element
+        if (!element) { return }
+        // scroll to the bottom
+        element.scrollTop = element.scrollHeight
+      }, time)
     }
   },
   async mounted() {
@@ -417,6 +454,8 @@ new Vue({
         }
         // start loading
         this.loading = true
+        // update last trained date
+        this.project.date_trained = Date.now()
         // save project data
         await this.saveProject()
         // dom update delay

@@ -93,6 +93,12 @@
   height: 30px;
 }
 
+#runner .options[data-model-type="image"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #runner .list {
   display: flex;
   flex-direction: column;
@@ -100,6 +106,7 @@
   flex-grow: 1;
   overflow-y: auto;
   flex-shrink: 0;
+  scroll-behavior: smooth;
 }
 
 .list-content {
@@ -137,6 +144,17 @@
   padding: 6px 8px;
   color: #FFF;
   border-radius: 8px;
+}
+
+#runner .item-content-image {
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#runner .item-content-image img {
+  border-radius: 6px;
 }
 
 #runner .item[data-message-sender="user"] .item-content {

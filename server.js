@@ -1,4 +1,4 @@
-import { Echo } from "./echo.js"
+import { Echo } from "./modules/Echo.js"
 import { createServer } from "http"
 import { WebSocketServer } from "ws"
 import express from "express"
@@ -65,8 +65,17 @@ wss.on("connection", client => {
       const path = `projects/${data.id}`
       // read project data
       const source = read(path + "/source.json")
+      // map inputs by type
+      const inputs = source.type === "image"
+        ? source.inputs.map(input => ({
+          patterns: input.patterns.map(item => (
+            `projects/${source.id}/uploads/${item}`
+          )),
+          response: input.response
+        }))
+        : source.inputs
       // train model with inputs
-      const instance = await echo.train(source.inputs, source.type, progress => {
+      const instance = await echo.train(source.type, inputs, progress => {
         // progress message
         send(client, { status: "training", progress })
       })
@@ -76,12 +85,6 @@ wss.on("connection", client => {
       await echo.save(instance, path + "/output")
       // update echo instance
       echo.instance = instance
-      // get current time
-      const time = Date.now()
-      // update latest trained time
-      source.date_trained = time
-      // save project data
-      write(path + "/source.json", source)
       // completed message
       send(client, { status: "completed" })
     }
@@ -186,8 +189,12 @@ app.get("/api/file", (req, res) => {
 })
 
 app.post("/api/predict", async (req, res) => {
+  // get input by model type
+  const input = echo.instance.type === "image"
+    ? `projects/${req.body.id}/uploads/${req.body.input}`
+    : req.body.input
   // return prediction result
-  res.send(await echo.predict(req.body.input))
+  res.send(await echo.predict(input))
 })
 
 // constance

@@ -2,6 +2,9 @@ import USE from "@tensorflow-models/universal-sentence-encoder"
 import TF from "@tensorflow/tfjs"
 import FS from "fs"
 
+import { textClassifier } from "./types/textClassifier.js"
+import { imageClassifier } from "./types/imageClassifier.js"
+
 // enable production mode
 TF.enableProdMode()
 
@@ -9,14 +12,12 @@ TF.enableProdMode()
 export class Echo {
   constructor() {
     /**
-     * @type {USE.UniversalSentenceEncoder}
-     * USE model */
-    this.useModel = null
-    /**
-     * @type {{ model: TF.LayersModel, output: any }}
+     * @type {{ model: TF.LayersModel, output: any, type: 'text' | 'image' }}
      * Current model instance
      */
     this.instance = null
+    /** @type {USE.UniversalSentenceEncoder} USE model */
+    this.useModel = null
   }
   /**
    * Initializes the resources
@@ -39,84 +40,30 @@ export class Echo {
    * @param {(number) => void} onProgress
    * Epoch end callback
    */
-  async train(inputs, type, onProgress) {
-    // get use model
-    const useModel = this.useModel
-    // return if use not loaded
-    if (!useModel) { return null }
-    // training data array
-    const data = []
-    // intents array
-    const intents = []
-    // responses array
-    const responses = []
-    // for each input
-    for (let i = 0; i < inputs.length; i++) {
-      // current input
-      const input = inputs[i]
-      // push patterns to training data
-      data.push(...input.patterns.map(text => ({ text, intent: i })))
-      // push to responses
-      responses.push({
-        type: input.response.type,
-        content: input.response.content[input.response.type],
-        script: input.response.script.enabled
-          ? input.response.script.content
-          : null
-      })
-      // push to intents
-      intents.push(i)
+  async train(type, inputs, onProgress) {
+    // switch by model type
+    if (type === "text") {
+      // train as text model
+      return await textClassifier.train(this, inputs, {
+        epochs: 35,
+        batchSize: 4,
+        shuffle: true,
+        verbose: 1
+      }, onProgress)
+    } else if (type === "image") {
+      // train as image model
+      return await imageClassifier.train(this, inputs, {
+        imageSize: 64,
+        epochs: 20
+      }, onProgress)
     }
-    // create vectorized intent map
-    const intentMap = data.map(item => (
-      // map intents by positions
-      intents.map(intent => item.intent === intent ? 1 : 0)
-    ))
-    // generate training data
-    const xs = await useModel.embed(data.map(item => item.text))
-    // generate response data
-    const ys = TF.tensor2d(intentMap)
-    // create a model
-    const model = TF.sequential()
-    // add vocabulary layer instance
-    model.add(TF.layers.dense({
-      inputShape: [512],
-      units: 128,
-      activation: 'relu'
-    }))
-    // add intents layer instance
-    model.add(TF.layers.dense({
-      units: intents.length,
-      activation: 'softmax'
-    }))
-    // compile model
-    model.compile({
-      loss: 'categoricalCrossentropy',
-      optimizer: 'adam',
-      metrics: ['accuracy']
-    })
-    // train model
-    await model.fit(xs, ys, {
-      epochs: 35,
-      batchSize: 4,
-      shuffle: true,
-      verbose: 1,
-      callbacks: {
-        onEpochEnd: epoch => {
-          onProgress(100 * (epoch + 1) / 35)
-        }
-      }
-    })
-    // create output object
-    const output = { type, responses }
-    // return model and output
-    return { model, output }
   }
   /**
    * Saves model locally
    * @param {{
    *  model: TF.LayersModel
    *  output: any
+   *  type: 'text' | 'image'
    * }} instance
    * Model instance
    * @param {string} path
@@ -124,9 +71,7 @@ export class Echo {
    */
   async save(instance, path) {
     // create directory if not available
-    if (!FS.existsSync(path)) {
-      FS.mkdirSync(path, { recursive: true })
-    }
+    FS.mkdirSync(path, { recursive: true })
     // create save handler
     const handler = TF.io.withSaveHandler(artifacts => artifacts)
     // generate model artifacts
@@ -179,7 +124,7 @@ export class Echo {
       weightData
     }))
     // store as current instance
-    this.instance = { model, output }
+    this.instance = { model, output, type: output.type }
     // return instance
     return this.instance
   }
@@ -189,13 +134,13 @@ export class Echo {
    * Input string
    */
   async predict(input) {
-    // created embedded array from input
-    const embedded = await this.useModel.embed([input])
-    // get model prediction for the input
-    const prediction = this.instance.model.predict(embedded)
-    // get intent index from prediction
-    const intent = prediction.argMax(1).dataSync()[0]
-    // return response by intent
-    return this.instance.output.responses[intent]
+    // switch by instance type
+    if (this.instance.type === "text") {
+      // predict as text model
+      return await textClassifier.predict(this, input)
+    } else if (this.instance.type === "image") {
+      // predict as image model
+      return await imageClassifier.predict(this, input, 64)
+    }
   }
 }
