@@ -13,7 +13,7 @@ export class Echo {
      * USE model */
     this.useModel = null
     /**
-     * @type {{ model: TF.LayersModel, outputs: any[] }}
+     * @type {{ model: TF.LayersModel, output: any }}
      * Current model instance
      */
     this.instance = null
@@ -34,10 +34,12 @@ export class Echo {
    * Trains a model
    * @param {{ patterns: string[], response: any }[]} inputs
    * Training data inputs
+   * @param {'text' | 'image'} type
+   * Model type
    * @param {(number) => void} onProgress
    * Epoch end callback
    */
-  async train(inputs, onProgress) {
+  async train(inputs, type, onProgress) {
     // get use model
     const useModel = this.useModel
     // return if use not loaded
@@ -46,16 +48,16 @@ export class Echo {
     const data = []
     // intents array
     const intents = []
-    // outputs array
-    const outputs = []
+    // responses array
+    const responses = []
     // for each input
     for (let i = 0; i < inputs.length; i++) {
       // current input
       const input = inputs[i]
       // push patterns to training data
       data.push(...input.patterns.map(text => ({ text, intent: i })))
-      // push to outputs
-      outputs.push({
+      // push to responses
+      responses.push({
         type: input.response.type,
         content: input.response.content[input.response.type],
         script: input.response.script.enabled
@@ -105,14 +107,16 @@ export class Echo {
         }
       }
     })
-    // return model and outputs
-    return { model, outputs }
+    // create output object
+    const output = { type, responses }
+    // return model and output
+    return { model, output }
   }
   /**
    * Saves model locally
    * @param {{
    *  model: TF.LayersModel
-   *  outputs: any[]
+   *  output: any
    * }} instance
    * Model instance
    * @param {string} path
@@ -127,9 +131,9 @@ export class Echo {
     const handler = TF.io.withSaveHandler(artifacts => artifacts)
     // generate model artifacts
     const artifacts = await instance.model.save(handler)
-    // get weight data and outputs data
+    // get weight data and output data
     const weightData = Buffer.from(artifacts.weightData)
-    const outputsData = JSON.stringify(instance.outputs)
+    const outputData = JSON.stringify(instance.output)
     // save model configuration
     FS.writeFileSync(`${path}/model.json`, JSON.stringify({
       modelTopology: artifacts.modelTopology,
@@ -141,9 +145,9 @@ export class Echo {
         weights: artifacts.weightSpecs,
       }]
     }))
-    // save weight data and outputs
+    // save weight data and output
     FS.writeFileSync(`${path}/weights.bin`, weightData)
-    FS.writeFileSync(`${path}/outputs.json`, outputsData)
+    FS.writeFileSync(`${path}/output.json`, outputData)
   }
   /**
    * Loads locally existing model
@@ -155,7 +159,7 @@ export class Echo {
     const paths = [
       `${path}/model.json`,
       `${path}/weights.bin`,
-      `${path}/outputs.json`
+      `${path}/output.json`
     ]
     // return if missing files
     if (paths.some(item => !FS.existsSync(item))) { return null }
@@ -164,7 +168,7 @@ export class Echo {
     // parse file contests
     const modelData = JSON.parse(data[0])
     const weightData = data[1]
-    const outputs = JSON.parse(data[2])
+    const output = JSON.parse(data[2])
     // get required content components
     const modelTopology = modelData.modelTopology
     const weightSpecs = modelData.weightsManifest[0].weights
@@ -175,7 +179,7 @@ export class Echo {
       weightData
     }))
     // store as current instance
-    this.instance = { model, outputs }
+    this.instance = { model, output }
     // return instance
     return this.instance
   }
@@ -192,6 +196,6 @@ export class Echo {
     // get intent index from prediction
     const intent = prediction.argMax(1).dataSync()[0]
     // return response by intent
-    return this.instance.outputs[intent]
+    return this.instance.output.responses[intent]
   }
 }

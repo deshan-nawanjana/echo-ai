@@ -4,6 +4,7 @@ import { WebSocketServer } from "ws"
 import express from "express"
 import dotenv from "dotenv"
 import crypto from "crypto"
+import multer from "multer"
 import fs from "fs"
 
 // create echo module
@@ -18,6 +19,24 @@ const send = (client, data) => client.send(JSON.stringify(data))
 
 // configure variables
 dotenv.config()
+
+// configure multer upload
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      // get files path
+      const path = `projects/${req.query.id}/uploads`
+      // create folder if not available
+      fs.mkdirSync(path, { recursive: true })
+      // return upload path
+      cb(null, path)
+    },
+    filename: function (req, file, cb) {
+      // return random file name
+      cb(null, crypto.randomUUID().toUpperCase())
+    },
+  })
+})
 
 // create express app
 const app = express()
@@ -47,7 +66,7 @@ wss.on("connection", client => {
       // read project data
       const source = read(path + "/source.json")
       // train model with inputs
-      const instance = await echo.train(source.inputs, progress => {
+      const instance = await echo.train(source.inputs, source.type, progress => {
         // progress message
         send(client, { status: "training", progress })
       })
@@ -148,6 +167,22 @@ app.delete("/api/project", (req, res) => {
   fs.rmSync(`projects/${id}/`, { recursive: true, force: true })
   // return response
   res.send({ id })
+})
+
+// method to upload files
+app.post("/api/upload", upload.array("files"), (req, res) => {
+  // return uploaded file names array
+  res.send(req.files.map(file => file.filename))
+})
+
+// method to expose files on projects
+app.get("/api/file", (req, res) => {
+  // get id parts
+  const parts = req.query.id.split(".")
+  // create file path
+  const path = `projects/${parts[0]}/uploads/${parts[1]}`
+  // return file content
+  res.send(fs.readFileSync(path))
 })
 
 app.post("/api/predict", async (req, res) => {

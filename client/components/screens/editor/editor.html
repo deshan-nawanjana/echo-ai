@@ -9,7 +9,8 @@
     </div>
     <!-- content : patterns -->
     <div class="content">
-      <div class="tags" v-if="selectedInput.patterns.length">
+      <!-- patterns : text -->
+      <div class="tags" v-if="project.type === 'text' && selectedInput.patterns.length">
         <div class="tag" v-for="(pattern, p) in selectedInput.patterns">
           <div class="tag-text">
             {{pattern}}
@@ -21,12 +22,34 @@
           </button>
         </div>
       </div>
+      <!-- patterns : image -->
+      <div class="images" v-if="project.type === 'image' && selectedInput.patterns.length">
+        <div class="image" v-for="(pattern, p) in selectedInput.patterns">
+          <div
+            class="image-preview"
+            :style="{ backgroundImage: `url(${toFileURL(project.id, pattern)})` }">
+          </div>
+          <button
+            class="image-delete"
+            data-icon="close"
+            @click="deletePattern(p)">
+          </button>
+        </div>
+      </div>
+      <!-- pattern input : text -->
       <input
         type="text"
         placeholder="Type a pattern and hit enter..."
         v-model="selectedInput._pattern"
-        @keydown="addPattern(event)"
+        v-if="project.type === 'text'"
+        @keydown="addTextPattern(event)"
       />
+      <!-- pattern input : image -->
+      <div class="upload" v-if="project.type === 'image'">
+        <button class="button square" @click="addImagePattern(selectedInput.id)">
+          <div data-icon="upload"></div>
+        </button>
+      </div>
     </div>
     <!-- header : response -->
     <div class="header secondary">

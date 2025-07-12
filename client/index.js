@@ -17,6 +17,40 @@ const API = (method, url, data) => (
     }).then(resp => resp.json())
 )
 
+// create canvas and file reader
+const canvas = document.createElement("canvas")
+const reader = new FileReader()
+
+// helper to resize image
+function resize(file) {
+  return new Promise(resolve => {
+    // create image
+    const img = new Image()
+    // image load event
+    img.addEventListener("load", () => {
+      // get image width to resize
+      const width = 100 * (img.width / img.height)
+      // set canvas dimensions
+      canvas.width = width
+      canvas.height = 100
+      // draw image on canvas
+      canvas.getContext("2d").drawImage(img, 0, 0, width, 100)
+      // create blob from canvas
+      canvas.toBlob(blob => {
+        // resolve canvas as
+        resolve(new File([blob], file.name, {
+          type: file.type,
+          lastModified: Date.now()
+        }))
+        // revoke blob url
+        URL.revokeObjectURL(img.src)
+      }, file.type)
+    })
+    // set blob url on image
+    img.src = URL.createObjectURL(file)
+  })
+}
+
 // preload components by placeholders
 await Promise.all(Array.from(qa("link[id]")).map(async holder => {
   // get component id
@@ -88,7 +122,13 @@ new Vue({
   methods: {
     // helper to get time string
     toDateString(date) {
+      // return as local date time string 
       return new Date(date).toLocaleString()
+    },
+    // helper to get file api url
+    toFileURL(project, file) {
+      // return api api url
+      return `/api/file?id=${project}.${file}`
     },
     // helper to match current project id
     isCurrentProject(id) {
@@ -213,8 +253,8 @@ new Vue({
       // clear selected input
       this.selectedInput = null
     },
-    // method to add pattern
-    addPattern(event) {
+    // method to add text pattern
+    addTextPattern(event) {
       // return if not enter key
       if (event.key !== "Enter") { return }
       // get selected input
@@ -227,6 +267,36 @@ new Vue({
       item.patterns.push(pattern)
       // clear pattern input
       item._pattern = ""
+    },
+    // method to add image patterns
+    addImagePattern(id) {
+      // create file input
+      const input = document.createElement("input")
+      // configure input options
+      input.type = "file"
+      input.multiple = true
+      input.accept = "image/png, image/jpeg"
+      // input listener
+      input.addEventListener("input", async () => {
+        // create form data
+        const data = new FormData()
+        // for each file on input
+        for (const file of input.files) {
+          // resize and append image
+          data.append("files", await resize(file))
+        }
+        // request files upload
+        const names = await fetch(`/api/upload?id=${this.project.id}`, {
+          method: "POST",
+          body: data
+        }).then(resp => resp.json())
+        // find input by id
+        const match = this.project.inputs.find(item => item.id === id)
+        // push file names to patterns
+        if (match) { match.patterns.push(...names) }
+      })
+      // trigger file open window
+      input.click()
     },
     // method to delete pattern
     deletePattern(index) {
