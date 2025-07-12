@@ -55,7 +55,13 @@ export class Echo {
       // push patterns to training data
       data.push(...input.patterns.map(text => ({ text, intent: i })))
       // push to outputs
-      outputs.push(input.response)
+      outputs.push({
+        type: input.response.type,
+        content: input.response.content[input.response.type],
+        script: input.response.script.enabled
+          ? input.response.script.content
+          : null
+      })
       // push to intents
       intents.push(i)
     }

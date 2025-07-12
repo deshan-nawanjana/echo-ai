@@ -151,16 +151,8 @@ app.delete("/api/project", (req, res) => {
 })
 
 app.post("/api/predict", async (req, res) => {
-  // get prediction data
-  const data = await echo.predict(req.body.input)
   // return prediction result
-  res.send({
-    type: data.type,
-    content: data.content[data.type],
-    script: data.script.enabled
-      ? data.script.content
-      : null
-  })
+  res.send(await echo.predict(req.body.input))
 })
 
 // constance
