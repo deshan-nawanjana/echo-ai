@@ -1,0 +1,69 @@
+<div id="runner" v-if="project.inputs.length">
+  <div class="content" v-if="project.date_trained && !training">
+    <div class="header">
+      <div class="header-text">
+        Run Predictions
+      </div>
+      <button
+        class="button square danger"
+        title="Clear predictions history"
+        :disabled="training"
+        v-if="isChatAvailable"
+        @click="project.predictions.data = []">
+        <div data-icon="delete"></div>
+      </button>
+      <button
+        class="button square success"
+        title="Retrain the model"
+        :disabled="training"
+        @click="trainModel">
+        <div data-icon="train"></div>
+      </button>
+    </div>
+    <div class="list" v-if="isChatAvailable">
+      <div class="list-content">
+        <div
+          class="item"
+          :data-message-type="item.type"
+          :data-message-sender="item.sender || false"
+          v-for="item in project.predictions.data">
+          <div class="item-content" :title="toDateString(item.time)">
+            {{item.sender ? item.data : "Model retrained"}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="list-empty" v-if="!isChatAvailable">
+      <div class="empty-title">
+        No Chat History
+      </div>
+      <div class="empty-description">
+        Send a message to run predictions
+      </div>
+    </div>
+    <div class="options">
+      <input
+        type="text"
+        v-model="project.predictions._input"
+        placeholder="Type a message and hit enter..."
+        @keydown="predictModel"
+      />
+    </div>
+  </div>
+  <div class="empty" v-else>
+    <div class="empty-title">
+      {{training ? "Training Your Model": "Run Predictions"}}
+    </div>
+    <div class="empty-description">
+      {{training ? "You can test your model after training": "You haven't train the model yet"}}
+    </div>
+    <div v-if="training">
+      <div class="progress">
+        <div class="progress-value" :style="{ width: progress + '%' }"></div>
+      </div>
+    </div>
+    <button class="button success" :disabled="training" @click="trainModel">
+      {{training ? `Training... (${progress}%)`: "Train Model"}}
+    </button>
+  </div>
+</div>

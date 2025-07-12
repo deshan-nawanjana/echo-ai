@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- meta tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- favicon -->
+  <link rel="shortcut icon" href="./index.png" type="image/png">
+  <!-- style -->
+  <link rel="stylesheet" href="./assets/fonts/fonts.css">
+  <link rel="stylesheet" href="./index.css">
+  <!-- libraries -->
+  <script src="./assets/libraries/vue.min.js"></script>
+  <!-- script -->
+  <script src="./index.js" type="module" defer></script>
+  <!-- page title -->
+  <title>Echo: USE-Powered AI Model Training Platform</title>
+</head>
+<body>
+  <div id="app">
+    <!-- header -->
+    <link id="layouts.header">
+    <div class="workspace">
+      <link id="layouts.navigator">
+      <!-- home screen -->
+      <div class="screen home" v-if="screen === 'home'">
+        Home
+      </div>
+      <!-- projects screen -->
+      <div class="screen projects" v-if="screen === 'projects'">
+        <link id="screens.projects.create">
+        <link id="screens.projects.remove">
+        <link id="screens.projects.listing">
+        <link id="screens.projects.details">
+      </div>
+      <!-- editor screen -->
+      <div class="screen editor" v-if="screen === 'editor' && project">
+        <link id="screens.editor.alert">
+        <link id="screens.editor.inputs">
+        <link id="screens.editor.editor">
+        <link id="screens.editor.runner">
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<div id="header">
+  <div class="logo"></div>
+  <div class="title" v-if="screen === 'home'">
+    Welcome to Echo!
+  </div>
+  <div class="title" v-if="screen === 'projects'">
+    Projects
+  </div>
+  <div class="title" v-if="screen === 'editor'">
+    {{project.name}}
+  </div>
+  <div class="options" v-if="screen === 'editor' && project">
+    <button class="button" v-if="!training" :disabled="saving" @click="saveProject">
+      {{saving ? "Saving...": "Save Project"}}
+    </button>
+  </div>
+</div>

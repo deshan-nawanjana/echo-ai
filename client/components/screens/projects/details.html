@@ -1,0 +1,38 @@
+<div id="details">
+  <div class="content" v-if="selectedProject">
+    <div class="icon" :data-type="selectedProject.type"></div>
+    <div class="name">
+      {{selectedProject.name}}
+    </div>
+    <div class="id">
+      {{selectedProject.id}}
+    </div>
+    <div class="detail">
+      <div class="label">
+        Created
+      </div>
+      <div class="value">
+        {{toDateString(selectedProject.date_created)}}
+      </div>
+    </div>
+    <div class="detail">
+      <div class="label">
+        Updated
+      </div>
+      <div class="value">
+        {{toDateString(selectedProject.date_updated)}}
+      </div>
+    </div>
+    <div class="buttons">
+      <button class="button" @click="openProject(selectedProject.id)">
+        Open in Editor
+      </button>
+      <button class="button danger" @click="remove.open = true">
+        Delete Project
+      </button>
+    </div>
+  </div>
+  <div v-else class="empty">
+    No project selected
+  </div>
+</div>

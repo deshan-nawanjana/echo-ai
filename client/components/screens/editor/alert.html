@@ -1,0 +1,17 @@
+<div id="alert" class="popup-backdrop" :data-open="alert.open">
+  <div class="popup">
+    <div class="popup-header">
+      Can't Train The Model
+    </div>
+    <div class="popup-content">
+      <div class="popup-text">
+        You should have at least two data inputs with patterns
+      </div>
+    </div>
+    <div class="popup-buttons">
+      <button class="button" @click="alert.open = false">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

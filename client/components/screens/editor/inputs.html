@@ -1,0 +1,28 @@
+<div id="inputs" v-if="project.inputs.length">
+  <div class="header">
+    <div class="header-text">
+      Training Data Inputs
+    </div>
+    <button class="button square" @click="createInput">
+      <div data-icon="add"></div>
+    </button>
+  </div>
+  <div class="content">
+    <div
+      class="item"
+      draggable="true"
+      v-for="item in project.inputs"
+      :data-selected="selectedInput && item.id === selectedInput.id"
+      @click="selectedInput = item">
+      <div class="item-icon" :data-type="project.type"></div>
+      <div class="item-content">
+        <div class="item-title">
+          {{item.name.trim() || 'Untitled Input'}}
+        </div>
+        <div class="item-details">
+          {{item.patterns.length}} Patterns · {{responseTypes[item.response.type]}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

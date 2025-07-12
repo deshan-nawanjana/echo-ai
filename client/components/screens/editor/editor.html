@@ -1,0 +1,132 @@
+<div id="editor">
+  <div class="item" v-if="project.inputs.length && selectedInput">
+    <!-- header : name -->
+    <div class="header">
+      <input type="text" v-model="selectedInput.name" placeholder="Input name">
+      <button class="button square danger" @click="deleteInput(selectedInput.id)">
+        <div data-icon="delete"></div>
+      </button>
+    </div>
+    <!-- content : patterns -->
+    <div class="content">
+      <div class="tags" v-if="selectedInput.patterns.length">
+        <div class="tag" v-for="(pattern, p) in selectedInput.patterns">
+          <div class="tag-text">
+            {{pattern}}
+          </div>
+          <button
+            class="tag-delete"
+            data-icon="close"
+            @click="deletePattern(p)">
+          </button>
+        </div>
+      </div>
+      <input
+        type="text"
+        placeholder="Type a pattern and hit enter..."
+        v-model="selectedInput._pattern"
+        @keydown="addPattern(event)"
+      />
+    </div>
+    <!-- header : response -->
+    <div class="header secondary">
+      <div class="text">
+        Response
+      </div>
+      <div class="switches">
+        <button
+          class="switch"
+          v-for="(label, value) in responseTypes"
+          :data-selected="selectedInput.response.type === value"
+          @click="selectedInput.response.type = value">
+          {{label}}
+        </button>
+      </div>
+    </div>
+    <!-- content : static -->
+    <div class="content" v-if="selectedInput.response.type === 'static'">
+      <textarea
+        type="text"
+        placeholder="Type response here..."
+        v-model="selectedInput.response.content.static">
+      </textarea>
+    </div>
+    <!-- content : random -->
+    <div class="content" v-if="selectedInput.response.type === 'random'">
+      <div class="tags" v-if="selectedInput.response.content.random.length">
+        <div class="tag" v-for="(response, r) in selectedInput.response.content.random">
+          <div class="tag-text">
+            {{response}}
+          </div>
+          <button
+            class="tag-delete"
+            data-icon="close"
+            @click="deleteRandomResponse(r)">
+          </button>
+        </div>
+      </div>
+      <input
+        type="text"
+        placeholder="Type a response and hit enter..."
+        v-model="selectedInput._response"
+        @keydown="addRandomResponse(event)"
+      />
+    </div>
+    <!-- content : json -->
+    <div class="content" v-if="selectedInput.response.type === 'json'">
+      <textarea
+        type="text"
+        placeholder="Type JSON response here..."
+        v-model="selectedInput.response.content.json">
+      </textarea>
+    </div>
+    <!-- header : scripting -->
+    <div class="header secondary">
+      <div class="text">
+        Scripting
+      </div>
+      <div class="switches">
+        <button
+          class="switch"
+          :data-selected="!selectedInput.response.script.enabled"
+          @click="selectedInput.response.script.enabled = false">
+          Disabled
+        </button>
+        <button
+          class="switch"
+          :data-selected="selectedInput.response.script.enabled"
+          @click="selectedInput.response.script.enabled = true">
+          Enabled
+        </button>
+      </div>
+    </div>
+    <!-- content : scripting -->
+    <div class="content" v-if="selectedInput.response.script.enabled">
+      <textarea
+        type="text"
+        placeholder="Type script here..."
+        v-model="selectedInput.response.script.content"
+        spellcheck="false">
+      </textarea>
+    </div>
+  </div>
+  <div class="empty" v-if="project.inputs.length && !selectedInput">
+    <div class="empty-title">
+      {{project.name}}
+    </div>
+    <div class="empty-description">
+      Select one of data inputs from the panel
+    </div>
+  </div>
+  <div class="empty" v-if="!project.inputs.length && !selectedInput">
+    <div class="empty-title">
+      {{project.name}}
+    </div>
+    <div class="empty-description">
+      You don't have any training data input on this project yet
+    </div>
+    <button class="button" @click="createInput">
+      Create A Training Data Input
+    </button>
+  </div>
+</div>

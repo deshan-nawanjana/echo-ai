@@ -1,0 +1,20 @@
+<div id="remove" class="popup-backdrop" :data-open="remove.open">
+  <div class="popup">
+    <div class="popup-header">
+      Delete Project
+    </div>
+    <div class="popup-content">
+      <div class="popup-text">
+        Are you sure you want to delete this project?
+      </div>
+    </div>
+    <div class="popup-buttons">
+      <button class="button" @click="remove.open = false">
+        Cancel
+      </button>
+      <button class="button danger" @click="deleteProject(selectedProject.id)">
+        Delete Project
+      </button>
+    </div>
+  </div>
+</div>

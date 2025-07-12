@@ -1,0 +1,48 @@
+<div id="create" class="popup-backdrop" :data-open="create.open">
+  <div class="popup">
+    <div class="popup-header">
+      Create A New Project
+    </div>
+    <div class="popup-content">
+      <input
+        type="text"
+        v-model="create.name"
+        placeholder="Type your project name..."
+        spellcheck="false"
+        ref="create_input"
+      />
+      <div class="types">
+        <div
+          class="type"
+          :data-selected="create.type === 'text'"
+          @click="create.type = 'text'">
+          <div data-type="text"></div>
+          <div class="label">
+            Text Classification
+          </div>
+        </div>
+        <div
+          class="type"
+          :data-selected="create.type === 'image'"
+          @click="create.type = 'image'">
+          <div data-type="image"></div>
+          <div class="label">
+            Image Classification
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="popup-buttons">
+      <button
+        class="button outline"
+        @click="create.open = false">
+        Cancel
+      </button>
+      <button
+        class="button"
+        @click="createProject">
+        Create Project
+      </button>
+    </div>
+  </div>
+</div>

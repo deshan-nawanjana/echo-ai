@@ -1,0 +1,38 @@
+<div id="listing">
+  <div class="options">
+    <button class="button icon" @click="createProjectPopup">
+      <div data-icon="add"></div>
+      Create
+    </button>
+    <button class="button icon outline">
+      <div data-icon="upload"></div>
+      Import
+    </button>
+  </div>
+  <div class="content" v-if="projects.length">
+    <div
+      class="item"
+      v-for="item in projects"
+      :data-active="selectedProject && selectedProject.id === item.id"
+      @click="selectedProject = item"
+      @dblclick="openProject(selectedProject.id)">
+      <div class="item-icon" :data-type="item.type"></div>
+      <div class="item-content">
+        <div class="item-title">
+          {{item.name}}
+        </div>
+        <div class="item-details">
+          {{toDateString(item.date_updated)}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="empty" v-if="!projects.length">
+    <div class="empty-description">
+      You don't have any projects
+    </div>
+    <button class="button" @click="createProjectPopup">
+      Create a Project
+    </button>
+  </div>
+</div>

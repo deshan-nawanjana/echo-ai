@@ -1,0 +1,152 @@
+#editor {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  gap: 15px;
+}
+
+#editor .item {
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+#editor .header {
+  box-shadow: inset 0px -1px 0px 0px var(--border-secondary);
+  display: flex;
+  padding: 9px;
+  align-items: center;
+}
+
+#editor .header.secondary {
+  border-top: 1px solid var(--border-secondary);
+}
+
+#editor .header input {
+  flex-grow: 1;
+  border: none;
+  height: 30px;
+  font-weight: 500;
+  color: #1f74c7;
+  padding: 0px 5px;
+  background-color: transparent;
+  font-size: 14px;
+}
+
+#editor .header .text {
+  flex-grow: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3f3f3f;
+}
+
+#editor .content {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#editor .switches {
+  display: flex;
+  gap: 3px;
+}
+
+#editor .switch {
+  background-color: #e0e0e0;
+  color: #62656c;
+  border-radius: 20px;
+  line-height: 25px;
+  justify-content: center;
+  gap: 5px;
+  border: none;
+  padding: 0px 8px;
+  height: 24px;
+  font-size: 11px;
+}
+
+#editor .switch[data-selected] {
+  background-color: #6a6969;
+  color: #ffffff;
+}
+
+#editor .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+#editor .tag {
+  background-color: #e0e1e4aa;
+  border-radius: 20px;
+  line-height: 25px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0px 5px 0px 10px;
+}
+
+#editor .tag-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: #283348;
+}
+
+#editor .tag-delete {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 10px auto;
+  background-color: #1112;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  width: 15px;
+  height: 15px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+#editor input {
+  border: none;
+  height: 35px;
+  width: 100%;
+  margin: 0px;
+  padding: 0px 5px;
+  font-size: 13px;
+  background-color: transparent;
+}
+
+#editor textarea {
+  border: none;
+  resize: none;
+  height: 230px;
+  width: calc(100% - 10px);
+  margin: 0px;
+  padding: 5px;
+  font-size: 13px;
+  background-color: transparent;
+}
+
+#editor .empty {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+#editor .empty-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3f3f3f;
+}
+
+#editor .empty-description {
+  font-size: 14px;
+  font-weight: 500;
+  color: #7b7e89;
+  margin-bottom: 10px;
+}

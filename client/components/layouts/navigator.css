@@ -1,0 +1,41 @@
+#navigator {
+  flex-shrink: 0;
+  padding: 12px;
+  border-right: 1px solid var(--border-secondary);
+  background-color: var(--background-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+#navigator button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background-color: transparent;
+  cursor: pointer;
+  background-position: center;
+  background-size: 20px auto;
+  background-repeat: no-repeat;
+  transition: all 0.15s;
+  opacity: 0.75;
+  padding: 0px;
+  margin: 0px;
+}
+
+#navigator button:hover {
+  background-color: #e9edf2;
+  opacity: 0.85;
+}
+
+#navigator button[data-selected] {
+  background-color: #e9edf2;
+  opacity: 1;
+}
+
+#navigator button:active {
+  background-color: #e1e5eb;
+  opacity: 0.85;
+}
