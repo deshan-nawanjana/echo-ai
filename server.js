@@ -190,6 +190,46 @@ app.get("/api/file", (req, res) => {
   res.send(fs.readFileSync(path))
 })
 
+// method to clean project source
+app.post("/api/clean", async (req, res) => {
+  // get project id
+  const id = req.body.id
+  // get project directory
+  const path = `projects/${id}`
+  // get project source
+  const source = read(`${path}/source.json`)
+  // patterns array
+  const patterns = []
+  // for each input
+  for (let i = 0; i < source.inputs.length; i++) {
+    // current input
+    const input = source.inputs[i]
+    // clean input values
+    input._pattern = ""
+    input._response = ""
+    // push to patterns
+    patterns.push(...input.patterns)
+  }
+  // get uploads path
+  const uploads = `${path}/uploads`
+  // only if text classification
+  if (source.type === "image" && fs.existsSync(uploads)) {
+    // get files from uploads
+    const files = fs.readdirSync(uploads)
+    // filter unwanted files
+    const unwanted = files.filter(item => !patterns.includes(item))
+    // remove unwanted files
+    unwanted.forEach(item => fs.rmSync(`${uploads}/${item}`))
+  }
+  // clean project chat history
+  source.predictions.data = []
+  source.predictions._input = ""
+  // save project source
+  write(`${path}/source.json`, source)
+  // return project data
+  res.send(source)
+})
+
 app.post("/api/predict", async (req, res) => {
   // get input by model type
   const input = echo.instance.type === "image"

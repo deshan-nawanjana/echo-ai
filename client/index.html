@@ -20,7 +20,7 @@
   <!-- main script -->
   <script src="./index.js" type="module" defer></script>
   <!-- page title -->
-  <title>Echo: USE-Powered AI Model Training Platform</title>
+  <title>Echo AI: Fast & Lightweight Model Training Platform</title>
 </head>
 <body>
   <div id="app" :data-theme="theme">
@@ -28,12 +28,9 @@
     <link id="layouts.header">
     <div class="workspace">
       <link id="layouts.navigator">
-      <!-- home screen -->
-      <div class="screen home" v-if="screen === 'home'">
-        <link id="screens.home.home">
-      </div>
       <!-- projects screen -->
       <div class="screen projects" v-if="screen === 'projects'">
+        <link id="screens.projects.clean">
         <link id="screens.projects.create">
         <link id="screens.projects.remove">
         <link id="screens.projects.listing">

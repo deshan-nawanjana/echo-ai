@@ -42,11 +42,13 @@ new Vue({
     // model predicting state
     predicting: false,
     // current screen
-    screen: "home",
+    screen: "projects",
     // all projects
     projects: [],
     // project create popup
     create: { open: false, name: "", type: "text" },
+    // project clean popup
+    clean: { open: false },
     // project delete popup
     remove: { open: false },
     // model train alert popup
@@ -134,16 +136,36 @@ new Vue({
     },
     // method to open project
     async openProject(id) {
+      // check current project id
+      if (this.project && this.project.id === id) {
+        // switch to editor screen
+        this.screen = "editor"
+      } else {
+        // start loading
+        this.loading = true
+        // clear selected input
+        this.selectedInput = null
+        // request project data
+        this.project = await API("GET", "project", { id })
+        // switch to editor screen
+        this.screen = "editor"
+        // focus on chat
+        this.focusChat(100)
+        // stop loading
+        this.loading = false
+      }
+    },
+    // method to clean project
+    async cleanProject(id) {
       // start loading
       this.loading = true
-      // clear selected input
+      // close popup
+      this.clean.open = false
+      // close opened project
+      this.project = null
       this.selectedInput = null
-      // request project data
-      this.project = await API("GET", "project", { id })
-      // switch to editor screen
-      this.screen = "editor"
-      // focus on chat
-      this.focusChat(100)
+      // request project clean
+      await API("POST", "clean", { id })
       // stop loading
       this.loading = false
     },
@@ -153,6 +175,12 @@ new Vue({
       this.saving = true
       // request project save
       this.project = await API("PUT", "project", this.project)
+      // update selected input
+      if (this.selectedInput) {
+        this.selectedInput = this.project.inputs.find(item => (
+          item.id === this.selectedInput.id
+        ))
+      }
       // reload all projects
       this.projects = await API("GET", "projects")
       // stop loading

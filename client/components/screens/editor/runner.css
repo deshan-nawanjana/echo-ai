@@ -173,5 +173,5 @@
 }
 
 #runner .item[data-message-type="retrained"] .item-content {
-  color: #1117;
+  color: var(--text-tertiary);
 }
