@@ -17,57 +17,8 @@ const API = (method, url, data) => (
     }).then(resp => resp.json())
 )
 
-// create canvas and file reader
-const canvas = document.createElement("canvas")
-const reader = new FileReader()
-
-// helper to resize image
-function resize(file) {
-  return new Promise(resolve => {
-    // create image
-    const img = new Image()
-    // image load event
-    img.addEventListener("load", () => {
-      // get image width to resize
-      const width = 100 * (img.width / img.height)
-      // set canvas dimensions
-      canvas.width = width
-      canvas.height = 100
-      // draw image on canvas
-      canvas.getContext("2d").drawImage(img, 0, 0, width, 100)
-      // create blob from canvas
-      canvas.toBlob(blob => {
-        // resolve canvas as
-        resolve(new File([blob], file.name, {
-          type: file.type,
-          lastModified: Date.now()
-        }))
-        // revoke blob url
-        URL.revokeObjectURL(img.src)
-      }, file.type)
-    })
-    // set blob url on image
-    img.src = URL.createObjectURL(file)
-  })
-}
-
-// preload components by placeholders
-await Promise.all(Array.from(qa("link[id]")).map(async holder => {
-  // get component id
-  const id = holder.getAttribute("id").replaceAll(".", "/")
-  // fetch dom resource
-  const html = await fetch(`components/${id}.html`)
-  // fetch style resource
-  const css = await fetch(`components/${id}.css`)
-  // replace holder element with dom
-  holder.outerHTML = await html.text()
-  // create style element
-  const element = document.createElement("Style")
-  // set style on element
-  element.innerHTML = await css.text()
-  // append style on head
-  document.head.appendChild(element)
-}))
+// preload components
+await preloadScript.preload()
 
 const responseTypes = {
   static: "Static",
@@ -80,6 +31,8 @@ new Vue({
   data: {
     // app ready state
     ready: false,
+    // current theme
+    theme: localStorage.getItem("echo-theme") || "light",
     // data loading state
     loading: false,
     // project saving state
@@ -89,7 +42,7 @@ new Vue({
     // model predicting state
     predicting: false,
     // current screen
-    screen: "projects",
+    screen: "home",
     // all projects
     projects: [],
     // project create popup
@@ -108,6 +61,9 @@ new Vue({
     socket: null,
     // training progress
     progress: null,
+    // external scripts
+    ...resizeScript,
+    ...codeScript,
     // type objects
     responseTypes
   },
@@ -120,6 +76,15 @@ new Vue({
     }
   },
   methods: {
+    // helper to switch theme
+    switchTheme() {
+      // get target theme
+      const theme = this.theme === "light" ? "dark" : "light"
+      // update theme
+      this.theme = theme
+      // store theme locally
+      localStorage.setItem("echo-theme", theme)
+    },
     // helper to get time string
     toDateString(date) {
       // return as local date time string 
@@ -228,7 +193,7 @@ new Vue({
           },
           script: {
             enabled: false,
-            content: ""
+            content: "function(response) {\n  // do something to response\n  return response;\n}"
           }
         },
         _pattern: "",
@@ -405,7 +370,7 @@ new Vue({
           // for each file on input
           for (const file of input.files) {
             // resize and append image
-            data.append("files", await resize(file))
+            data.append("files", await this.resizeImage(file))
           }
           // request files upload
           const names = await fetch(`/api/upload?id=${this.project.id}`, {

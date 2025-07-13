@@ -3,7 +3,10 @@
     <!-- header : name -->
     <div class="header">
       <input type="text" v-model="selectedInput.name" placeholder="Input name">
-      <button class="button square danger" @click="deleteInput(selectedInput.id)">
+      <button
+        class="button square danger"
+        title="Delete input"
+        @click="deleteInput(selectedInput.id)">
         <div data-icon="delete"></div>
       </button>
     </div>
@@ -70,6 +73,7 @@
     <div class="content" v-if="selectedInput.response.type === 'static'">
       <textarea
         type="text"
+        class="textarea"
         placeholder="Type response here..."
         v-model="selectedInput.response.content.static">
       </textarea>
@@ -96,12 +100,18 @@
       />
     </div>
     <!-- content : json -->
-    <div class="content" v-if="selectedInput.response.type === 'json'">
-      <textarea
-        type="text"
-        placeholder="Type JSON response here..."
-        v-model="selectedInput.response.content.json">
-      </textarea>
+    <div class="content content-prism" v-if="selectedInput.response.type === 'json'">
+      <div class="code">
+        <textarea
+          spellcheck="false"
+          placeholder="Type JSON response here..."
+          v-model="selectedInput.response.content.json"
+          @keydown="event => selectedInput.response.content.json = codeEvent(event)"
+          @keyup="event => selectedInput.response.content.json = event.target.value"
+          @input="event => selectedInput.response.content.json = event.target.value"
+          @scroll="codeScroll"></textarea>
+          <pre v-html="codeHighlight(selectedInput.response.content.json, 'json')"></pre>
+      </div>
     </div>
     <!-- header : scripting -->
     <div class="header secondary">
@@ -124,13 +134,18 @@
       </div>
     </div>
     <!-- content : scripting -->
-    <div class="content" v-if="selectedInput.response.script.enabled">
-      <textarea
-        type="text"
-        placeholder="Type script here..."
-        v-model="selectedInput.response.script.content"
-        spellcheck="false">
-      </textarea>
+    <div class="content content-prism" v-if="selectedInput.response.script.enabled">
+      <div class="code">
+        <textarea
+          spellcheck="false"
+          placeholder="Type script here..."
+          v-model="selectedInput.response.script.content"
+          @keydown="event => selectedInput.response.script.content = codeEvent(event)"
+          @keyup="event => selectedInput.response.script.content = event.target.value"
+          @input="event => selectedInput.response.script.content = event.target.value"
+          @scroll="codeScroll"></textarea>
+          <pre v-html="codeHighlight(selectedInput.response.script.content, 'js')"></pre>
+      </div>
     </div>
   </div>
   <div class="empty" v-if="project.inputs.length && !selectedInput">

@@ -8,23 +8,29 @@
   <link rel="shortcut icon" href="./index.png" type="image/png">
   <!-- style -->
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
+  <link rel="stylesheet" href="./assets/libraries/prism.min.css">
   <link rel="stylesheet" href="./index.css">
   <!-- libraries -->
   <script src="./assets/libraries/vue.min.js"></script>
-  <!-- script -->
+  <script src="./assets/libraries/prism.min.js"></script>
+  <!-- scripts -->
+  <script src="./assets/scripts/preload.js"></script>
+  <script src="./assets/scripts/resize.js"></script>
+  <script src="./assets/scripts/code.js"></script>
+  <!-- main script -->
   <script src="./index.js" type="module" defer></script>
   <!-- page title -->
   <title>Echo: USE-Powered AI Model Training Platform</title>
 </head>
 <body>
-  <div id="app">
+  <div id="app" :data-theme="theme">
     <!-- header -->
     <link id="layouts.header">
     <div class="workspace">
       <link id="layouts.navigator">
       <!-- home screen -->
       <div class="screen home" v-if="screen === 'home'">
-        Home
+        <link id="screens.home.home">
       </div>
       <!-- projects screen -->
       <div class="screen projects" v-if="screen === 'projects'">

@@ -9,9 +9,18 @@
   <div class="title" v-if="screen === 'editor'">
     {{project.name}}
   </div>
-  <div class="options" v-if="screen === 'editor' && project">
-    <button class="button" v-if="!training" :disabled="saving" @click="saveProject">
+  <div class="options">
+    <button
+      class="button"
+       v-if="screen === 'editor' && project && !training"
+      :disabled="saving"
+      @click="saveProject">
       {{saving ? "Saving...": "Save Project"}}
+    </button>
+    <button
+      class="theme"
+      @click="switchTheme">
+      <div :data-mode="theme" class="theme-node"></div>
     </button>
   </div>
 </div>

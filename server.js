@@ -1,10 +1,12 @@
 import { Echo } from "./modules/Echo.js"
+import { auth } from "./modules/auth.js"
 import { createServer } from "http"
 import { WebSocketServer } from "ws"
 import express from "express"
 import dotenv from "dotenv"
 import crypto from "crypto"
 import multer from "multer"
+import open from "open"
 import fs from "fs"
 
 // create echo module
@@ -201,10 +203,16 @@ app.post("/api/predict", async (req, res) => {
 const PORT = process.env.PORT
 const BASE = `http://localhost:${PORT}`
 
+// display info
+auth()
+
 // start server
 server.listen(PORT, () => {
   // initiate echo module
   echo.init(`${BASE}/assets/models`).then(() => {
-    console.log(`🌐 Server Started: ${BASE}`)
+    // print server info
+    console.log(`Started: ${BASE}`)
+    // open client on browser
+    open(BASE)
   })
 })
