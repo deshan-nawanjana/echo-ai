@@ -5,12 +5,13 @@
   border: 1px solid var(--border-primary);
   padding: 0px 10px;
   font-weight: 500;
-  color: #3f3f3f;
+  color: var(--text-primary);
   transition: all 0.15s;
+  background-color: transparent;
 }
 
 #create input:focus {
-  border: 1px solid #aabde5;
+  border: 1px solid var(--border-secondary);
 }
 
 #create .types {
@@ -22,8 +23,8 @@
 #create .type {
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid var(--border-secondary);
-  color: #6e7179;
+  border: 1px solid var(--border-primary);
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,9 +35,8 @@
 }
 
 #create .type[data-selected] {
-  border: 1px solid #0e68cf22;
-  background-color: #0e68cf22;
-  color: #0e68cf;
+  border: 1px solid var(--border-secondary);
+  background-color: var(--selection-tertiary);
 }
 
 #create .type [data-type] {

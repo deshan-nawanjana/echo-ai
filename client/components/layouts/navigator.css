@@ -1,7 +1,7 @@
 #navigator {
   flex-shrink: 0;
   padding: 12px;
-  border-right: 1px solid var(--border-secondary);
+  border-right: 1px solid var(--border-primary);
   background-color: var(--background-secondary);
   display: flex;
   flex-direction: column;
@@ -19,23 +19,17 @@
   background-position: center;
   background-size: 20px auto;
   background-repeat: no-repeat;
-  transition: all 0.15s;
   opacity: 0.75;
   padding: 0px;
   margin: 0px;
 }
 
 #navigator button:hover {
-  background-color: #e9edf2;
+  background-color: var(--selection-secondary);
   opacity: 0.85;
 }
 
 #navigator button[data-selected] {
-  background-color: #e9edf2;
+  background-color: var(--selection-secondary);
   opacity: 1;
-}
-
-#navigator button:active {
-  background-color: #e1e5eb;
-  opacity: 0.85;
 }

@@ -13,7 +13,7 @@
   text-align: center;
   line-height: calc(100vh - 65px);
   font-size: 13px;
-  color: #7b7e89;
+  color: var(--text-tertiary);
 }
 
 #details .content {
@@ -31,14 +31,14 @@
 #details .name {
   text-align: center;
   font-weight: 600;
-  color: #3f3f3f;
+  color: var(--text-primary);
   font-size: 18px;
   line-height: 40px;
 }
 
 #details .id {
   text-align: center;
-  color: #7b7e89;
+  color: var(--text-quaternary);
   font-size: 9px;
   margin-bottom: 30px;
   font-style: italic;
@@ -53,14 +53,14 @@
 }
 
 #details .label {
-  color: #6e7179;
-  font-weight: 500;
+  color: var(--text-tertiary);
+  font-weight: 600;
   width: 60px;
   text-align: right;
 }
 
 #details .value {
-  color: #3f3f3f;
+  color: var(--text-quaternary);
   font-weight: 600;
 }
 

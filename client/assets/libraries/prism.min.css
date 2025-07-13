@@ -1,0 +1,83 @@
+/* PrismJS 1.29.0 */
+
+.token.comment,
+.token.block-comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #8b949e;
+}
+
+.token.punctuation {
+    color: #ccc;
+}
+
+.token.tag,
+.token.attr-name,
+.token.namespace,
+.token.deleted {
+    color: #e2777a;
+}
+
+.token.function-name {
+    color: #6196cc;
+}
+
+.token.boolean,
+.token.function {
+    color: #d2a8ff;
+}
+
+.token.number {
+    color: #79c0ff;
+}
+
+.token.property,
+.token.class-name,
+.token.constant,
+.token.symbol {
+    color: #79c0ff;
+}
+
+.token.selector,
+.token.important,
+.token.atrule,
+.token.keyword,
+.token.builtin {
+    color: #ff7b72;
+}
+
+.token.string,
+.token.char,
+.token.attr-value,
+.token.regex,
+.token.variable {
+    color: #a5d6ff;
+}
+
+.token.dom.variable {
+    color: #c9d1d9;
+}
+
+.token.operator,
+.token.entity,
+.token.url {
+    color: #67cdcc;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+.token.inserted {
+    color: green;
+}

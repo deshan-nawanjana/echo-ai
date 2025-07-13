@@ -18,7 +18,7 @@
 #header .title {
   font-size: 18px;
   font-weight: 600;
-  color: #3f3f3f;
+  color: var(--text-primary);
   flex-grow: 1;
 }
 
@@ -30,4 +30,32 @@
 
 #header .options .button {
   width: 150px;
+}
+
+#header .theme {
+  height: 35px;
+  padding: 0px 5px;
+  width: 60px;
+  border-radius: 30px;
+  transition: all 0.15s;
+  border: 1px solid #0c73eb;
+  background-color: #0c73eb;
+  color: #ffffff;
+  cursor: pointer;
+  gap: 8px;
+}
+
+#header .theme-node {
+  width: 25px;
+  height: 25px;
+  border-radius: 25px;
+  background-color: #FFF;
+  transition: margin 0.2s;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 18px auto;
+}
+
+#header .theme-node[data-mode="dark"] {
+  margin-left: 23px;
 }

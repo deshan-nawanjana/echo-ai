@@ -25,7 +25,7 @@
 #listing .empty-description {
   font-size: 18px;
   font-weight: 500;
-  color: #6e7179;
+  color: var(--text-tertiary);
 }
 
 #listing .content {
@@ -42,7 +42,7 @@
   padding: 8px;
   height: 50px;
   border-radius: 10px;
-  border: 1px solid var(--border-secondary);
+  border: 1px solid var(--border-primary);
   flex-shrink: 0;
   cursor: pointer;
   gap: 6px;
@@ -61,13 +61,9 @@
   }
 }
 
-#listing .item:active {
-  background-color: #f6f7fc;
-}
-
 #listing .item[data-active] {
-  background-color: #eaf4fc;
-  border: 1px solid #eaf4fc;
+  background-color: var(--selection-tertiary);
+  border: 1px solid var(--border-secondary);
 }
 
 #listing .item-icon {
@@ -88,11 +84,11 @@
   font-size: 12px;
   font-weight: 600;
   line-height: 12px;
-  color: #283348;
+  color: var(--text-primary);
 }
 
 #listing .item-details {
   font-size: 10px;
-  color: #7b7e89;
+  color: var(--text-tertiary);
   line-height: 12px;
 }
