@@ -73,14 +73,16 @@ This sections is where you can test the trained model by sending text / image in
 
 [Deshan.lk](https://deshan.lk/)
 &ensp;|&ensp;
-[DNJS](https://dnjs.lk/)
-&ensp;|&ensp;
 [LinkedIn](https://www.linkedin.com/in/deshan-nawanjana/)
+&ensp;|&ensp;
+[Facebook](https://www.facebook.com/mr.dnjs)
 &ensp;|&ensp;
 [GitHub](https://github.com/deshan-nawanjana)
 &ensp;|&ensp;
 [YouTube](https://www.youtube.com/@deshan-nawanjana)
 &ensp;|&ensp;
-[Blogger](https://dn-w.blogspot.com/)
+[X](https://x.com/DeshanNawanjana)
 &ensp;|&ensp;
-[Facebook](https://www.fb.com/mr.dnjs)
+[Instagram](https://www.instagram.com/_d.boy_/)
+&ensp;|&ensp;
+[Reddit](https://www.reddit.com/user/DeshanNawanjana/)

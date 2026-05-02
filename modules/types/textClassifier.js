@@ -109,4 +109,6 @@ export const textClassifier = {
     // return response by intent
     return module.instance.output.responses[intent]
   }
+
+  
 }
